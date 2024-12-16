@@ -1,80 +1,92 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class MainMenu {
 
     public static void main(String[] args) {
-        // Apelarea metodei pentru a lansa fereastra principală
         SwingUtilities.invokeLater(() -> {
+            // Crearea ferestrei principale
             JFrame frame = new JFrame("Real Estate Agency");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(600, 400);
-            frame.setLocationRelativeTo(null); // Center the window
+            frame.setLocationRelativeTo(null); // Centrează fereastra pe ecran
 
-            // Crearea unui meniu mai detaliat
+            // Crearea barei de meniu
             JMenuBar menuBar = new JMenuBar();
-            menuBar.setBackground(Color.LIGHT_GRAY); // Schimbăm culoarea de fundal a meniului
+            menuBar.setBackground(Color.LIGHT_GRAY);
 
-            // Meniul principal "Options"
+            // Crearea meniului cu opțiuni
             JMenu menu = new JMenu("Options");
             menu.setFont(new Font("Arial", Font.BOLD, 14));
             menu.setForeground(Color.DARK_GRAY);
 
-            // Submeniuri
-            JMenuItem viewSpatiiMenuItem = new JMenuItem("View spaces"); // Căutare spații
-            JMenuItem searchOffersByPriceMenuItem = new JMenuItem("Search Offers by Price");
-            JMenuItem searchRentalOffersMenuItem = new JMenuItem("Search Rental Offers by Price");
+            // Crearea elementelor de meniu
+            JMenuItem viewSpatiiMenuItem = new JMenuItem("View Spaces");
+            JMenuItem searchOffersByPriceMenuItem = new JMenuItem("Sale Offers");
+            JMenuItem searchRentalOffersMenuItem = new JMenuItem("Rental Offers");
+            JMenuItem searchSpacePairsMenuItem = new JMenuItem("Space Pairs by Price Difference");
+            JMenuItem searchSpacesByCharacteristicsMenuItem = new JMenuItem("Search Spaces");
             JMenuItem exitMenuItem = new JMenuItem("Exit");
 
-            // Adăugăm opțiunile în meniu
+            // Adăugarea elementelor de meniu
             menu.add(viewSpatiiMenuItem);
             menu.add(searchOffersByPriceMenuItem);
-            menu.add(searchRentalOffersMenuItem);  // Noua opțiune pentru căutarea ofertelor de închiriere
-            menu.addSeparator(); // Linie separatoare
-            menu.add(exitMenuItem); // Meniu de ieșire
+            menu.add(searchRentalOffersMenuItem);
+            menu.add(searchSpacePairsMenuItem);
+            menu.add(searchSpacesByCharacteristicsMenuItem);  // Opțiune nouă
+            menu.addSeparator();
+            menu.add(exitMenuItem);
 
-            // Adăugăm meniul în bara de meniu
+            // Adăugarea meniului în bara de meniu
             menuBar.add(menu);
 
-            // Toolbar cu butoane
+            // Crearea toolbar-ului
             JToolBar toolBar = new JToolBar();
-            toolBar.setRollover(true); // Adăugăm un efect de hover pentru toolbar
-            toolBar.setFloatable(false); // Toolbar-ul nu poate fi deplasat
+            toolBar.setRollover(true);
+            toolBar.setFloatable(false);
 
+            // Crearea butoanelor pentru toolbar
             JButton viewSpacesButton = new JButton("View Spaces");
-            JButton offersByPriceButton = new JButton("Search Offers by Price");
-            JButton rentalOffersButton = new JButton("Search Rental Offers");
+            JButton offersByPriceButton = new JButton("Sale Offers");
+            JButton rentalOffersButton = new JButton("Rental Offers");
+            JButton spacePairsButton = new JButton("Space Pairs by Price Difference");
+            JButton searchSpacesByCharacteristicsButton = new JButton("Search Spaces");
 
+            // Adăugarea butoanelor în toolbar
             toolBar.add(viewSpacesButton);
             toolBar.add(offersByPriceButton);
-            toolBar.add(rentalOffersButton);  // Butonul pentru căutarea ofertelor de închiriere
+            toolBar.add(rentalOffersButton);
+            toolBar.add(spacePairsButton);
+            toolBar.add(searchSpacesByCharacteristicsButton);  // Butonul nou pentru căutarea după caracteristici
 
-            // Setăm meniul și toolbar-ul pe fereastra principală
+            // Adăugarea componentei în fereastră
             frame.setJMenuBar(menuBar);
             frame.add(toolBar, BorderLayout.NORTH);
 
-            // Panou principal pentru conținut
+            // Crearea unui panel pentru conținut
             JPanel panel = new JPanel();
             panel.setLayout(new BorderLayout());
             frame.add(panel);
 
-            // Adăugăm un handler pentru meniuri
+            // Crearea handler-ului pentru evenimente
             MenuHandler menuHandler = new MenuHandler(frame);
 
-            // Setăm acțiunile pentru opțiunile din meniu
+            // Asocierea evenimentelor de la meniuri cu handler-ul
             viewSpatiiMenuItem.addActionListener(menuHandler.getViewSpacesActionListener());
             searchOffersByPriceMenuItem.addActionListener(menuHandler.getSearchOffersByPriceActionListener());
-            searchRentalOffersMenuItem.addActionListener(menuHandler.getSearchRentalOffersActionListener());  // Handler pentru căutarea ofertelor de închiriere
+            searchRentalOffersMenuItem.addActionListener(menuHandler.getSearchRentalOffersActionListener());
+            searchSpacePairsMenuItem.addActionListener(menuHandler.getSearchSpacePairsActionListener());
+            searchSpacesByCharacteristicsMenuItem.addActionListener(menuHandler.getSearchSpacesByCharacteristicsActionListener());  // Adăugarea evenimentului
             exitMenuItem.addActionListener(menuHandler.getExitActionListener());
 
-            // Setăm acțiunile pentru butoanele din toolbar
+            // Asocierea evenimentelor de la butoane cu handler-ul
             viewSpacesButton.addActionListener(menuHandler.getViewSpacesActionListener());
             offersByPriceButton.addActionListener(menuHandler.getSearchOffersByPriceActionListener());
-            rentalOffersButton.addActionListener(menuHandler.getSearchRentalOffersActionListener());  // Handler pentru butonul de căutare oferte de închiriere
+            rentalOffersButton.addActionListener(menuHandler.getSearchRentalOffersActionListener());
+            spacePairsButton.addActionListener(menuHandler.getSearchSpacePairsActionListener());
+            searchSpacesByCharacteristicsButton.addActionListener(menuHandler.getSearchSpacesByCharacteristicsActionListener());  // Adăugarea evenimentului
 
-            // Vizualizarea ferestrei
+            // Vizualizarea ferestrei principale
             frame.setVisible(true);
         });
     }

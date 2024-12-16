@@ -11,45 +11,44 @@ public class MenuHandler {
     }
 
     public ActionListener getViewSpacesActionListener() {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Deschiderea ferestrei pentru căutarea spațiilor
-                SpatiiByAdresa spatiiFrame = new SpatiiByAdresa();
-                spatiiFrame.setVisible(true);
-            }
+        return e -> {
+            SpatiiByAdresa spatiiFrame = new SpatiiByAdresa();
+            spatiiFrame.setVisible(true);
         };
     }
 
     public ActionListener getSearchOffersByPriceActionListener() {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Deschide fereastra pentru căutarea ofertelor după preț
-                OferteVanzare app = new OferteVanzare();
-                app.setVisible(true);
-            }
+        return e -> {
+            OferteVanzare app = new OferteVanzare();
+            app.setVisible(true);
         };
     }
 
     public ActionListener getSearchRentalOffersActionListener() {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Deschide fereastra pentru căutarea ofertelor de închiriere
-                RentalOffersSearchFrame app = new RentalOffersSearchFrame();
-                app.setVisible(true);
-            }
+        return e -> {
+            RentalOffersSearchFrame app = new RentalOffersSearchFrame();
+            app.setVisible(true);
+        };
+    }
+
+    public ActionListener getSearchSpacePairsActionListener() {
+        return e -> {
+            // Deschiderea ferestrei pentru căutarea perechilor de spații
+            SpacePairsSearchFrame app = new SpacePairsSearchFrame();
+            app.setVisible(true);
+        };
+    }
+
+    // Adăugarea unui ActionListener pentru căutarea spațiilor cu caracteristici
+    public ActionListener getSearchSpacesByCharacteristicsActionListener() {
+        return e -> {
+            // Aici vei deschide o fereastră pentru a căuta spații cu anumite caracteristici
+            SearchSpacesByCharacteristicsFrame app = new SearchSpacesByCharacteristicsFrame();
+            app.setVisible(true);
         };
     }
 
     public ActionListener getExitActionListener() {
-        return new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                // Iesim din aplicatie
-                System.exit(0);
-            }
-        };
+        return e -> System.exit(0);
     }
 }
