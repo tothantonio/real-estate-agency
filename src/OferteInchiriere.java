@@ -4,14 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class RentalOffersSearchFrame extends JFrame {
+public class OferteInchiriere extends JFrame {
 
     private JTextField minPriceField, maxPriceField;
     private JComboBox<String> offerTypeComboBox;
     private JTextArea resultArea;
     private JButton searchButton;
 
-    public RentalOffersSearchFrame() {
+    public OferteInchiriere() {
         setTitle("Search Rental Offers");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);

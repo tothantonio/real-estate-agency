@@ -4,11 +4,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class SearchSpacesByCharacteristicsFrame extends JFrame {
+public class SearchSpacesByCharacteristics extends JFrame {
 
-    public SearchSpacesByCharacteristicsFrame() {
+    private JTextField txtCaracteristici;
+    private JTextArea resultArea;
+
+    public SearchSpacesByCharacteristics() {
         setTitle("Search Spaces by Characteristics");
-        setSize(400, 300);
+        setSize(600, 400);
         setLocationRelativeTo(null); // Center the window
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close the window without stopping the application
 
@@ -17,7 +20,7 @@ public class SearchSpacesByCharacteristicsFrame extends JFrame {
 
         // Add fields for characteristics
         JLabel lblCaracteristici = new JLabel("Enter Characteristics (comma-separated):");
-        JTextField txtCaracteristici = new JTextField();
+        txtCaracteristici = new JTextField();
         JButton btnSearch = new JButton("Search");
 
         // Add components to the panel
@@ -27,7 +30,13 @@ public class SearchSpacesByCharacteristicsFrame extends JFrame {
         panel.add(btnSearch);
 
         // Add the panel to the main window
-        add(panel, BorderLayout.CENTER);
+        add(panel, BorderLayout.NORTH);
+
+        // Add result area
+        resultArea = new JTextArea();
+        resultArea.setEditable(false);
+        JScrollPane scrollPane = new JScrollPane(resultArea);
+        add(scrollPane, BorderLayout.CENTER);
 
         // Action on search button click
         btnSearch.addActionListener(new ActionListener() {
@@ -35,7 +44,7 @@ public class SearchSpacesByCharacteristicsFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String caracteristici = txtCaracteristici.getText();
                 if (caracteristici.isEmpty()) {
-                    JOptionPane.showMessageDialog(SearchSpacesByCharacteristicsFrame.this, "Please enter some characteristics to search for.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                    resultArea.setText("Please enter some characteristics to search for.");
                 } else {
                     // Logic to search spaces based on characteristics
                     searchSpacesByCharacteristics(caracteristici);
@@ -60,7 +69,7 @@ public class SearchSpacesByCharacteristicsFrame extends JFrame {
 
         // Add conditions for each characteristic
         for (int i = 0; i < caracteristiciArray.length; i++) {
-            queryBuilder.append("AND T.caracteristici LIKE ? ");
+            queryBuilder.append("AND LOWER(T.caracteristici) LIKE ? ");
         }
         queryBuilder.append("ORDER BY O.pret ASC;");
         String query = queryBuilder.toString();
@@ -70,14 +79,14 @@ public class SearchSpacesByCharacteristicsFrame extends JFrame {
 
             // Set parameters for the query
             for (int i = 0; i < caracteristiciArray.length; i++) {
-                String caracteristiciPattern = "%" + caracteristiciArray[i].trim() + "%"; // Add % to search anywhere in the text
+                String caracteristiciPattern = "%" + caracteristiciArray[i].trim().toLowerCase() + "%"; // Add % to search anywhere in the text
                 stmt.setString(i + 1, caracteristiciPattern);
             }
 
             // Execute the query
             ResultSet rs = stmt.executeQuery();
 
-            // Display results in a dialog window
+            // Display results in the text area
             StringBuilder results = new StringBuilder();
             while (rs.next()) {
                 String ofertaDetails = "ID: " + rs.getInt("id_spatiu") +
@@ -87,20 +96,20 @@ public class SearchSpacesByCharacteristicsFrame extends JFrame {
             }
 
             if (results.length() == 0) {
-                JOptionPane.showMessageDialog(this, "No spaces found with the given characteristics.");
+                resultArea.setText("No spaces found with the given characteristics.");
             } else {
-                JOptionPane.showMessageDialog(this, "Found the following spaces:\n" + results.toString());
+                resultArea.setText("Found the following spaces:\n" + results.toString());
             }
 
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            resultArea.setText("Database error: " + e.getMessage());
         }
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             // Create and display the search window
-            SearchSpacesByCharacteristicsFrame frame = new SearchSpacesByCharacteristicsFrame();
+            SearchSpacesByCharacteristics frame = new SearchSpacesByCharacteristics();
             frame.setVisible(true);
         });
     }

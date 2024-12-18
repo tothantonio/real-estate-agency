@@ -1,0 +1,31 @@
+DELIMITER $$
+
+CREATE PROCEDURE GetAgentiPretSimilar(
+    IN idAgentie INT,
+    IN idSpatiu INT
+)
+BEGIN
+    SELECT A.nume
+    FROM Agentie A
+    WHERE A.id_agentie IN (
+        SELECT O.id_agentie
+        FROM Oferta O
+        JOIN Spatiu S ON O.id_spatiu = S.id_spatiu
+        JOIN Tip T ON S.id_tip = T.id_tip
+        WHERE S.id_tip = (
+            SELECT S2.id_tip
+            FROM Spatiu S2
+            WHERE S2.id_spatiu = idSpatiu
+        ) AND O.pret = (
+            SELECT O2.pret
+            FROM Oferta O2
+            WHERE O2.id_agentie = idAgentie AND O2.id_spatiu = idSpatiu
+        ) AND O.moneda = (
+            SELECT O3.moneda
+            FROM Oferta O3
+            WHERE O3.id_agentie = idAgentie AND O3.id_spatiu = idSpatiu
+        )
+    );
+END$$
+
+DELIMITER ;

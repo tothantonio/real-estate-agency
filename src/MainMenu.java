@@ -26,6 +26,9 @@ public class MainMenu {
             JMenuItem searchRentalOffersMenuItem = new JMenuItem("Rental Offers");
             JMenuItem searchSpacePairsMenuItem = new JMenuItem("Space Pairs by Price Difference");
             JMenuItem searchSpacesByCharacteristicsMenuItem = new JMenuItem("Search Spaces");
+            JMenuItem searchSimilarAgentSpacesMenuItem = new JMenuItem("Search Similar Spaces");
+            JMenuItem searchPricesBySpaceTypeMenuItem = new JMenuItem("Search Sale Prices");
+            JMenuItem searchRentalPricesBySpaceTypeMenuItem = new JMenuItem("Search Rental Prices");
             JMenuItem exitMenuItem = new JMenuItem("Exit");
 
             // Adăugarea elementelor de meniu
@@ -34,6 +37,9 @@ public class MainMenu {
             menu.add(searchRentalOffersMenuItem);
             menu.add(searchSpacePairsMenuItem);
             menu.add(searchSpacesByCharacteristicsMenuItem);
+            menu.add(searchSimilarAgentSpacesMenuItem);
+            menu.add(searchPricesBySpaceTypeMenuItem);
+            menu.add(searchRentalPricesBySpaceTypeMenuItem);
             menu.addSeparator();
             menu.add(exitMenuItem);
 
@@ -51,6 +57,9 @@ public class MainMenu {
             JButton rentalOffersButton = new JButton("Rental Offers");
             JButton spacePairsButton = new JButton("Space Pairs by Price Difference");
             JButton searchSpacesByCharacteristicsButton = new JButton("Search Spaces");
+            JButton searchSimilarAgentSpacesButton = new JButton("Search Similar Spaces");
+            JButton searchPricesBySpaceTypeButton = new JButton("Search Sale Prices");
+            JButton searchRentalPricesBySpaceTypeButton = new JButton("Search Rental Prices");
 
             // Adăugarea butoanelor în toolbar
             toolBar.add(viewSpacesButton);
@@ -58,6 +67,9 @@ public class MainMenu {
             toolBar.add(rentalOffersButton);
             toolBar.add(spacePairsButton);
             toolBar.add(searchSpacesByCharacteristicsButton);
+            toolBar.add(searchSimilarAgentSpacesButton);
+            toolBar.add(searchPricesBySpaceTypeButton);
+            toolBar.add(searchRentalPricesBySpaceTypeButton);
 
             // Adăugarea componentei în fereastră
             frame.setJMenuBar(menuBar);
@@ -76,7 +88,10 @@ public class MainMenu {
             searchOffersByPriceMenuItem.addActionListener(menuHandler.getSearchOffersByPriceActionListener());
             searchRentalOffersMenuItem.addActionListener(menuHandler.getSearchRentalOffersActionListener());
             searchSpacePairsMenuItem.addActionListener(menuHandler.getSearchSpacePairsActionListener());
-            searchSpacesByCharacteristicsMenuItem.addActionListener(menuHandler.getSearchSpacesByCharacteristicsActionListener());  // Adăugarea evenimentului
+            searchSpacesByCharacteristicsMenuItem.addActionListener(menuHandler.getSearchSpacesByCharacteristicsActionListener());
+            searchSimilarAgentSpacesMenuItem.addActionListener(menuHandler.getSearchSimilarAgentSpacesActionListener());
+            searchPricesBySpaceTypeMenuItem.addActionListener(menuHandler.getSearchPricesBySpaceTypeActionListener());
+            searchRentalPricesBySpaceTypeMenuItem.addActionListener(menuHandler.getSearchRentalPricesBySpaceTypeActionListener());
             exitMenuItem.addActionListener(menuHandler.getExitActionListener());
 
             // Asocierea evenimentelor de la butoane cu handler-ul
@@ -84,7 +99,10 @@ public class MainMenu {
             offersByPriceButton.addActionListener(menuHandler.getSearchOffersByPriceActionListener());
             rentalOffersButton.addActionListener(menuHandler.getSearchRentalOffersActionListener());
             spacePairsButton.addActionListener(menuHandler.getSearchSpacePairsActionListener());
-            searchSpacesByCharacteristicsButton.addActionListener(menuHandler.getSearchSpacesByCharacteristicsActionListener());  // Adăugarea evenimentului
+            searchSpacesByCharacteristicsButton.addActionListener(menuHandler.getSearchSpacesByCharacteristicsActionListener());
+            searchSimilarAgentSpacesButton.addActionListener(menuHandler.getSearchSimilarAgentSpacesActionListener());
+            searchPricesBySpaceTypeButton.addActionListener(menuHandler.getSearchPricesBySpaceTypeActionListener());
+            searchRentalPricesBySpaceTypeButton.addActionListener(menuHandler.getSearchRentalPricesBySpaceTypeActionListener());
 
             // Vizualizarea ferestrei principale
             frame.setVisible(true);

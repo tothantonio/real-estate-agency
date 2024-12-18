@@ -4,13 +4,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
 
-public class SpacePairsSearchFrame extends JFrame {
+public class SpacePairsSearch extends JFrame {
 
     private JTextField priceDifferenceField; // Input pentru diferența de preț
     private JTextArea resultArea; // Zonă pentru afișarea rezultatelor
     private JButton searchButton; // Butonul pentru căutare
 
-    public SpacePairsSearchFrame() {
+    public SpacePairsSearch() {
         setTitle("Search Space Pairs by Price Difference");
         setSize(600, 400);
         setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
@@ -59,12 +59,14 @@ public class SpacePairsSearchFrame extends JFrame {
 
     private void searchSpacePairs(double maxPriceDifference) {
         String query = """
-        SELECT O1.id_spatiu AS id_spatiu1, O2.id_spatiu AS id_spatiu2
-        FROM oferta O1
-        JOIN oferta O2 
-            ON O1.id_agentie = O2.id_agentie AND O1.id_spatiu != O2.id_spatiu
-        WHERE O1.vanzare = 'D' AND O2.vanzare = 'D'
-          AND ABS(O1.pret - O2.pret) <= ?;
+    SELECT O1.id_spatiu AS id_spatiu1, O2.id_spatiu AS id_spatiu2, A.nume AS nume
+    FROM oferta O1
+    JOIN oferta O2
+        ON O1.id_agentie = O2.id_agentie AND O1.id_spatiu < O2.id_spatiu
+    JOIN agentie A
+        ON O1.id_agentie = A.id_agentie
+    WHERE O1.vanzare = 'D' AND O2.vanzare = 'D'
+      AND ABS(O1.pret - O2.pret) <= ?;
     """;
 
         try (Connection conn = DataBaseConnection.getConnection();
@@ -78,8 +80,10 @@ public class SpacePairsSearchFrame extends JFrame {
             while (rs.next()) {
                 int idSpatiu1 = rs.getInt("id_spatiu1");
                 int idSpatiu2 = rs.getInt("id_spatiu2");
+                String denumireAgentie = rs.getString("nume");
 
-                result.append("ID Spatiu 1: ").append(idSpatiu1)
+                result.append("Agency: ").append(denumireAgentie)
+                        .append(", ID Spatiu 1: ").append(idSpatiu1)
                         .append(", ID Spatiu 2: ").append(idSpatiu2)
                         .append("\n");
             }

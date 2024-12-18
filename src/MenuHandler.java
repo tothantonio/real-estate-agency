@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class MenuHandler {
@@ -26,24 +25,42 @@ public class MenuHandler {
 
     public ActionListener getSearchRentalOffersActionListener() {
         return e -> {
-            RentalOffersSearchFrame app = new RentalOffersSearchFrame();
+            OferteInchiriere app = new OferteInchiriere();
             app.setVisible(true);
         };
     }
 
     public ActionListener getSearchSpacePairsActionListener() {
         return e -> {
-            // Deschiderea ferestrei pentru căutarea perechilor de spații
-            SpacePairsSearchFrame app = new SpacePairsSearchFrame();
+            SpacePairsSearch app = new SpacePairsSearch();
             app.setVisible(true);
         };
     }
 
-    // Adăugarea unui ActionListener pentru căutarea spațiilor cu caracteristici
     public ActionListener getSearchSpacesByCharacteristicsActionListener() {
         return e -> {
-            // Aici vei deschide o fereastră pentru a căuta spații cu anumite caracteristici
-            SearchSpacesByCharacteristicsFrame app = new SearchSpacesByCharacteristicsFrame();
+            SearchSpacesByCharacteristics app = new SearchSpacesByCharacteristics();
+            app.setVisible(true);
+        };
+    }
+
+    public ActionListener getSearchSimilarAgentSpacesActionListener() {
+        return e -> {
+            SearchSimilarAgentSpaces app = new SearchSimilarAgentSpaces();
+            app.setVisible(true);
+        };
+    }
+
+    public ActionListener getSearchPricesBySpaceTypeActionListener() {
+        return e -> {
+            PreturiSpatiuPerMoneda app = new PreturiSpatiuPerMoneda();
+            app.setVisible(true);
+        };
+    }
+
+    public ActionListener getSearchRentalPricesBySpaceTypeActionListener() {
+        return e -> {
+            RentalPrices app = new RentalPrices();
             app.setVisible(true);
         };
     }
