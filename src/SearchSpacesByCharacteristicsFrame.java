@@ -47,9 +47,9 @@ public class SearchSpacesByCharacteristicsFrame extends JFrame {
     // Method to search spaces based on characteristics
     private void searchSpacesByCharacteristics(String caracteristici) {
         // Database connection
-        String url = "jdbc:mysql://localhost:3306/real_estate"; // Example database URL
+        String url = "jdbc:mysql://localhost:3306/real_estate";
         String user = "root";
-        String password = ""; // Replace with your password
+        String password = "";
 
         // Split the characteristics by comma
         String[] caracteristiciArray = caracteristici.split(",");

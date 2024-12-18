@@ -33,7 +33,7 @@ public class MainMenu {
             menu.add(searchOffersByPriceMenuItem);
             menu.add(searchRentalOffersMenuItem);
             menu.add(searchSpacePairsMenuItem);
-            menu.add(searchSpacesByCharacteristicsMenuItem);  // Opțiune nouă
+            menu.add(searchSpacesByCharacteristicsMenuItem);
             menu.addSeparator();
             menu.add(exitMenuItem);
 
@@ -57,7 +57,7 @@ public class MainMenu {
             toolBar.add(offersByPriceButton);
             toolBar.add(rentalOffersButton);
             toolBar.add(spacePairsButton);
-            toolBar.add(searchSpacesByCharacteristicsButton);  // Butonul nou pentru căutarea după caracteristici
+            toolBar.add(searchSpacesByCharacteristicsButton);
 
             // Adăugarea componentei în fereastră
             frame.setJMenuBar(menuBar);

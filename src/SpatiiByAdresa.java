@@ -19,7 +19,7 @@ public class SpatiiByAdresa extends JFrame {
 
         // Top panel with the address field and search button
         JPanel topPanel = new JPanel();
-        topPanel.add(new JLabel("Enter the start of the address:"));
+        topPanel.add(new JLabel("Enter the address:"));
         adresaField = new JTextField(20);
         topPanel.add(adresaField);
         searchButton = new JButton("Search");
@@ -38,7 +38,7 @@ public class SpatiiByAdresa extends JFrame {
                 if (!prefixAdresa.isEmpty()) {
                     searchSpatiiByAdresa(prefixAdresa);
                 } else {
-                    resultArea.setText("Please enter the start of the address.");
+                    resultArea.setText("Please enter the address.");
                 }
             }
         });
@@ -50,7 +50,7 @@ public class SpatiiByAdresa extends JFrame {
                 if (!prefixAdresa.isEmpty()) {
                     searchSpatiiByAdresa(prefixAdresa);
                 } else {
-                    resultArea.setText("Please enter the start of the address.");
+                    resultArea.setText("Please enter the address.");
                 }
             }
         });
