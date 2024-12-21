@@ -47,7 +47,7 @@ public class RentalPrices extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String tipSpatiu = tipSpatiuField.getText().trim();
                 if (!tipSpatiu.isEmpty()) {
-                    System.out.println("Button clicked. Searching for: " + tipSpatiu);
+                    //System.out.println("Button clicked. Searching for: " + tipSpatiu);
                     searchPricesBySpaceType(tipSpatiu);
                 } else {
                     resultArea.setText("Vă rugăm să introduceți un tip valid de spațiu.");
@@ -70,7 +70,7 @@ public class RentalPrices extends JFrame {
              PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, tipSpatiu);
-            System.out.println("Executing query: " + query);
+            //System.out.println("Executing query: " + query);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 StringBuilder result = new StringBuilder("Prețuri de închiriere pentru spații de tip '" + tipSpatiu + "' per zonă și monedă:\n\n");

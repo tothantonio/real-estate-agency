@@ -65,6 +65,34 @@ public class MenuHandler {
         };
     }
 
+    public ActionListener getAddAgencyActionListener() {
+        return e -> {
+            AddAgencyFrame addAgencyFrame = new AddAgencyFrame();
+            addAgencyFrame.setVisible(true);
+        };
+    }
+
+    public ActionListener getAddTypeActionListener() {
+        return e -> {
+            AddTypeFrame addTypeFrame = new AddTypeFrame();
+            addTypeFrame.setVisible(true);
+        };
+    }
+
+    public ActionListener getAddSpaceActionListener() {
+        return e -> {
+            AddSpaceFrame addSpaceFrame = new AddSpaceFrame();
+            addSpaceFrame.setVisible(true);
+        };
+    }
+
+    public ActionListener getAddOfferActionListener() {
+        return e -> {
+            AddOfferFrame addOfferFrame = new AddOfferFrame();
+            addOfferFrame.setVisible(true);
+        };
+    }
+
     public ActionListener getExitActionListener() {
         return e -> System.exit(0);
     }

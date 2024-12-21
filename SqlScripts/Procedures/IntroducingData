@@ -1,0 +1,43 @@
+DELIMITER $$
+
+CREATE PROCEDURE AddAgency(
+    IN p_id_agentie INT,
+    IN p_nume VARCHAR(100),
+    IN p_telefon VARCHAR(15)
+)
+BEGIN
+    INSERT INTO Agentie (id_agentie, nume, telefon) VALUES (p_id_agentie, p_nume, p_telefon);
+END$$
+
+CREATE PROCEDURE AddType(
+    IN p_id_tip INT,
+    IN p_denumire VARCHAR(100),
+    IN p_caracteristici VARCHAR(255)
+)
+BEGIN
+    INSERT INTO Tip (id_tip, denumire, caracteristici) VALUES (p_id_tip, p_denumire, p_caracteristici);
+END$$
+
+CREATE PROCEDURE AddSpace(
+    IN p_id_spatiu INT,
+    IN p_adresa VARCHAR(255),
+    IN p_zona INT,
+    IN p_suprafata INT,
+    IN p_id_tip INT
+)
+BEGIN
+    INSERT INTO Spatiu (id_spatiu, adresa, zona, suprafata, id_tip) VALUES (p_id_spatiu, p_adresa, p_zona, p_suprafata, p_id_tip);
+END$$
+
+CREATE PROCEDURE AddOffer(
+    IN p_id_agentie INT,
+    IN p_id_spatiu INT,
+    IN p_vanzare CHAR(1),
+    IN p_pret INT,
+    IN p_moneda VARCHAR(3)
+)
+BEGIN
+    INSERT INTO Oferta (id_agentie, id_spatiu, vanzare, pret, moneda) VALUES (p_id_agentie, p_id_spatiu, p_vanzare, p_pret, p_moneda);
+END$$
+
+DELIMITER ;
