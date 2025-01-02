@@ -43,6 +43,7 @@ public class SearchSimilarAgentSpaces extends JFrame {
         // Zonă pentru afișarea rezultatelor
         resultArea = new JTextArea();
         resultArea.setEditable(false);
+        resultArea.setFont(new Font("Times New Roman", Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(resultArea);
         add(scrollPane, BorderLayout.CENTER);
 

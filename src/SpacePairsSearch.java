@@ -36,6 +36,7 @@ public class SpacePairsSearch extends JFrame {
         // Zonă pentru afișarea rezultatelor
         resultArea = new JTextArea();
         resultArea.setEditable(false);
+        resultArea.setFont(new Font("Times New Roman", Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(resultArea);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -59,7 +60,8 @@ public class SpacePairsSearch extends JFrame {
 
     private void searchSpacePairs(double maxPriceDifference) {
         String query = """
-    SELECT O1.id_spatiu AS id_spatiu1, O2.id_spatiu AS id_spatiu2, A.nume AS nume
+    SELECT O1.id_spatiu AS id_spatiu1, O2.id_spatiu AS id_spatiu2, A.nume AS nume, 
+           ABS(O1.pret - O2.pret) AS price_difference
     FROM oferta O1
     JOIN oferta O2
         ON O1.id_agentie = O2.id_agentie AND O1.id_spatiu < O2.id_spatiu
@@ -81,10 +83,12 @@ public class SpacePairsSearch extends JFrame {
                 int idSpatiu1 = rs.getInt("id_spatiu1");
                 int idSpatiu2 = rs.getInt("id_spatiu2");
                 String denumireAgentie = rs.getString("nume");
+                double priceDifference = rs.getDouble("price_difference");
 
                 result.append("Agency: ").append(denumireAgentie)
                         .append(", ID Spatiu 1: ").append(idSpatiu1)
                         .append(", ID Spatiu 2: ").append(idSpatiu2)
+                        .append(", Price Difference: ").append(priceDifference)
                         .append("\n");
             }
 

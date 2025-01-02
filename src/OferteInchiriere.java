@@ -28,7 +28,6 @@ public class OferteInchiriere extends JFrame {
         maxPriceField = new JTextField();
         JLabel offerTypeLabel = new JLabel("Select offer type:");
 
-        // Modificăm ComboBox pentru a conține doar tipurile de spații specifice
         offerTypeComboBox = new JComboBox<>(new String[]{"Apartament", "Garsoniera", "Garaj", "Vila", "Spatiu Comercial", "Duplex"});
 
         inputPanel.add(minPriceLabel);
@@ -45,6 +44,7 @@ public class OferteInchiriere extends JFrame {
 
         resultArea = new JTextArea();
         resultArea.setEditable(false);
+        resultArea.setFont(new Font("Times New Roman", Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(resultArea);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -64,7 +64,6 @@ public class OferteInchiriere extends JFrame {
     }
 
     private void searchRentalOffers(double minPrice, double maxPrice, String offerType) {
-        // Modificăm interogarea pentru a selecta spațiile pe baza tipului specificat și pentru a căuta doar oferte de închiriere (vanzare = 'N')
         String query = "SELECT Spatiu.adresa, Spatiu.zona, Spatiu.suprafata, Tip.denumire, Oferta.pret, Oferta.moneda " +
                 "FROM Oferta " +
                 "JOIN Spatiu ON Oferta.id_spatiu = Spatiu.id_spatiu " +

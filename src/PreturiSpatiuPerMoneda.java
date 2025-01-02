@@ -35,13 +35,14 @@ public class PreturiSpatiuPerMoneda extends JFrame {
 
         add(inputPanel, BorderLayout.NORTH);
 
-        // Zonă pentru afișarea rezultatelor
+        // Zona pentru afișarea rezultatelor
         resultArea = new JTextArea();
         resultArea.setEditable(false);
+        resultArea.setFont(new Font("Times New Roman", Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(resultArea);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Acțiunea la apăsarea butonului
+        // Acțiunea la apasarea butonului
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
