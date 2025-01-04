@@ -3,12 +3,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class SearchSimilarAgentSpaces extends JFrame {
 
     private JTextField idAgentieField;
     private JTextField idSpatiuField;
-    private JTextArea resultArea;
+    private JTable resultTable;
     private JButton searchButton;
 
     public SearchSimilarAgentSpaces() {
@@ -41,10 +43,9 @@ public class SearchSimilarAgentSpaces extends JFrame {
         add(inputPanel, BorderLayout.NORTH);
 
         // Zonă pentru afișarea rezultatelor
-        resultArea = new JTextArea();
-        resultArea.setEditable(false);
-        resultArea.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        JScrollPane scrollPane = new JScrollPane(resultArea);
+        resultTable = new JTable();
+        resultTable.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        JScrollPane scrollPane = new JScrollPane(resultTable);
         add(scrollPane, BorderLayout.CENTER);
 
         // Acțiune la apăsarea butonului
@@ -58,10 +59,10 @@ public class SearchSimilarAgentSpaces extends JFrame {
                     if (idAgentie > 0 && idSpatiu > 0) {
                         searchSimilarSpaces(idAgentie, idSpatiu);
                     } else {
-                        resultArea.setText("Please enter valid positive numbers for IDs.");
+                        JOptionPane.showMessageDialog(SearchSimilarAgentSpaces.this, "Please enter valid positive numbers for IDs.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (NumberFormatException ex) {
-                    resultArea.setText("Please enter valid numbers for Agency ID and Space ID.");
+                    JOptionPane.showMessageDialog(SearchSimilarAgentSpaces.this, "Please enter valid numbers for Agency ID and Space ID.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -78,23 +79,30 @@ public class SearchSimilarAgentSpaces extends JFrame {
             stmt.setInt(2, idSpatiu);
 
             ResultSet rs = stmt.executeQuery();
-            StringBuilder result = new StringBuilder();
+            DefaultTableModel model = new DefaultTableModel(new String[]{"Agency Name"}, 0);
 
             // Procesăm rezultatele
             while (rs.next()) {
-                result.append("Agency Name: ").append(rs.getString("nume")).append("\n");
+                String agencyName = rs.getString("nume");
+                model.addRow(new Object[]{agencyName});
             }
 
-            if (result.length() == 0) {
-                result.append("No matching agencies found.");
-            }
+            resultTable.setModel(model);
 
-            resultArea.setText(result.toString());
+            // Set preferred widths for each column
+            TableColumnModel columnModel = resultTable.getColumnModel();
+            columnModel.getColumn(0).setPreferredWidth(200); // Agency Name
 
         } catch (SQLException e) {
             e.printStackTrace();
-            resultArea.setText("Error querying the database: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error querying the database: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            SearchSimilarAgentSpaces frame = new SearchSimilarAgentSpaces();
+            frame.setVisible(true);
+        });
+    }
 }

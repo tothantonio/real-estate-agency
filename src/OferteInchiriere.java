@@ -3,12 +3,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class OferteInchiriere extends JFrame {
 
     private JTextField minPriceField, maxPriceField;
     private JComboBox<String> offerTypeComboBox;
-    private JTextArea resultArea;
+    private JTable resultTable;
     private JButton searchButton;
 
     public OferteInchiriere() {
@@ -42,10 +44,9 @@ public class OferteInchiriere extends JFrame {
         inputPanel.add(searchButton);
         add(inputPanel, BorderLayout.NORTH);
 
-        resultArea = new JTextArea();
-        resultArea.setEditable(false);
-        resultArea.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        JScrollPane scrollPane = new JScrollPane(resultArea);
+        resultTable = new JTable();
+        resultTable.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        JScrollPane scrollPane = new JScrollPane(resultTable);
         add(scrollPane, BorderLayout.CENTER);
 
         searchButton.addActionListener(new ActionListener() {
@@ -57,7 +58,7 @@ public class OferteInchiriere extends JFrame {
                     String offerType = (String) offerTypeComboBox.getSelectedItem();
                     searchRentalOffers(minPrice, maxPrice, offerType);
                 } catch (NumberFormatException ex) {
-                    resultArea.setText("Please enter valid numbers for prices.");
+                    JOptionPane.showMessageDialog(OferteInchiriere.this, "Please enter valid numbers for prices.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -81,26 +82,40 @@ public class OferteInchiriere extends JFrame {
             stmt.setDouble(3, maxPrice);
 
             ResultSet rs = stmt.executeQuery();
-            StringBuilder result = new StringBuilder();
+            DefaultTableModel model = new DefaultTableModel(new String[]{"Adresa", "Zona", "Suprafata", "Tip", "Pret", "Moneda"}, 0);
 
             while (rs.next()) {
-                result.append("Adresa: ").append(rs.getString("adresa"))
-                        .append(", Zona: ").append(rs.getString("zona"))
-                        .append(", Suprafata: ").append(rs.getDouble("suprafata"))
-                        .append(", Tip: ").append(rs.getString("denumire"))
-                        .append(", Pret: ").append(rs.getDouble("pret"))
-                        .append(" ").append(rs.getString("moneda"))
-                        .append("\n");
+                String adresa = rs.getString("adresa");
+                String zona = rs.getString("zona");
+                double suprafata = rs.getDouble("suprafata");
+                String tip = rs.getString("denumire");
+                double pret = rs.getDouble("pret");
+                String moneda = rs.getString("moneda");
+
+                model.addRow(new Object[]{adresa, zona, suprafata, tip, pret, moneda});
             }
 
-            if (result.length() == 0) {
-                result.append("No rental offers found in this price range.");
-            }
+            resultTable.setModel(model);
 
-            resultArea.setText(result.toString());
+            // Set preferred widths for each column
+            TableColumnModel columnModel = resultTable.getColumnModel();
+            columnModel.getColumn(0).setPreferredWidth(150); // Adresa
+            columnModel.getColumn(1).setPreferredWidth(100); // Zona
+            columnModel.getColumn(2).setPreferredWidth(100); // Suprafata
+            columnModel.getColumn(3).setPreferredWidth(100); // Tip
+            columnModel.getColumn(4).setPreferredWidth(100); // Pret
+            columnModel.getColumn(5).setPreferredWidth(50);  // Moneda
+
         } catch (SQLException e) {
             e.printStackTrace();
-            resultArea.setText("Error querying the database.");
+            JOptionPane.showMessageDialog(this, "Error querying the database.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            OferteInchiriere frame = new OferteInchiriere();
+            frame.setVisible(true);
+        });
     }
 }

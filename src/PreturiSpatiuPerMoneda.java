@@ -2,15 +2,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class PreturiSpatiuPerMoneda extends JFrame {
 
     private JTextField tipSpatiuField;
-    private JTextArea resultArea;
+    private JTable resultTable;
     private JButton searchButton;
 
     public PreturiSpatiuPerMoneda() {
@@ -27,7 +26,7 @@ public class PreturiSpatiuPerMoneda extends JFrame {
         JLabel tipSpatiuLabel = new JLabel("Introduceți tipul spațiului:");
         tipSpatiuField = new JTextField();
 
-        searchButton = new JButton("Caută");
+        searchButton = new JButton("Search");
         inputPanel.add(tipSpatiuLabel);
         inputPanel.add(tipSpatiuField);
         inputPanel.add(new JLabel()); // Spacer
@@ -36,10 +35,9 @@ public class PreturiSpatiuPerMoneda extends JFrame {
         add(inputPanel, BorderLayout.NORTH);
 
         // Zona pentru afișarea rezultatelor
-        resultArea = new JTextArea();
-        resultArea.setEditable(false);
-        resultArea.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        JScrollPane scrollPane = new JScrollPane(resultArea);
+        resultTable = new JTable();
+        resultTable.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        JScrollPane scrollPane = new JScrollPane(resultTable);
         add(scrollPane, BorderLayout.CENTER);
 
         // Acțiunea la apasarea butonului
@@ -48,15 +46,20 @@ public class PreturiSpatiuPerMoneda extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String tipSpatiu = tipSpatiuField.getText().trim();
                 if (!tipSpatiu.isEmpty()) {
-                    searchPricesBySpaceType(tipSpatiu);
+                    try {
+                        searchPricesBySpaceType(tipSpatiu);
+                    } catch (SQLException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(PreturiSpatiuPerMoneda.this, "Eroare la interogarea bazei de date: " + ex.getMessage(), "Eroare", JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
-                    resultArea.setText("Vă rugăm să introduceți un tip valid de spațiu.");
+                    JOptionPane.showMessageDialog(PreturiSpatiuPerMoneda.this, "Vă rugăm să introduceți un tip valid de spațiu.", "Eroare", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
     }
 
-    private void searchPricesBySpaceType(String tipSpatiu) {
+    private void searchPricesBySpaceType(String tipSpatiu) throws SQLException {
         String query = """
             SELECT O.moneda, MIN(O.pret) AS pret_minim, AVG(O.pret) AS pret_mediu, MAX(O.pret) AS pret_maxim
             FROM Oferta O
@@ -72,27 +75,34 @@ public class PreturiSpatiuPerMoneda extends JFrame {
             stmt.setString(1, tipSpatiu);
 
             try (ResultSet rs = stmt.executeQuery()) {
-                StringBuilder result = new StringBuilder("Prețuri pentru spații de tip '" + tipSpatiu + "' per monedă:\n\n");
+                DefaultTableModel model = new DefaultTableModel(new String[]{"Moneda", "Preț Minim", "Preț Mediu", "Preț Maxim"}, 0);
 
-                boolean hasResults = false;
                 while (rs.next()) {
-                    hasResults = true;
-                    result.append("Moneda: ").append(rs.getString("moneda")).append("\n")
-                            .append("  Preț Minim: ").append(rs.getDouble("pret_minim")).append("\n")
-                            .append("  Preț Mediu: ").append(rs.getDouble("pret_mediu")).append("\n")
-                            .append("  Preț Maxim: ").append(rs.getDouble("pret_maxim")).append("\n\n");
+                    String moneda = rs.getString("moneda");
+                    double pretMinim = rs.getDouble("pret_minim");
+                    double pretMediu = rs.getDouble("pret_mediu");
+                    double pretMaxim = rs.getDouble("pret_maxim");
+
+                    model.addRow(new Object[]{moneda, pretMinim, pretMediu, pretMaxim});
                 }
 
-                if (!hasResults) {
-                    result.append("Nu s-au găsit rezultate pentru tipul specificat.");
-                }
+                resultTable.setModel(model);
 
-                resultArea.setText(result.toString());
+                // Set preferred widths for each column
+                TableColumnModel columnModel = resultTable.getColumnModel();
+                columnModel.getColumn(0).setPreferredWidth(100); // Moneda
+                columnModel.getColumn(1).setPreferredWidth(100); // Preț Minim
+                columnModel.getColumn(2).setPreferredWidth(100); // Preț Mediu
+                columnModel.getColumn(3).setPreferredWidth(100); // Preț Maxim
+
             }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            resultArea.setText("Eroare la interogarea bazei de date: " + e.getMessage());
         }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            PreturiSpatiuPerMoneda frame = new PreturiSpatiuPerMoneda();
+            frame.setVisible(true);
+        });
     }
 }

@@ -3,12 +3,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class OferteVanzare extends JFrame {
 
     private JTextField minPriceField, maxPriceField;
     private JButton searchButton;
-    private JTextArea resultArea;
+    private JTable resultTable;
 
     public OferteVanzare() {
         setTitle("Search Offers by Price");
@@ -38,10 +40,9 @@ public class OferteVanzare extends JFrame {
 
         add(topPanel, BorderLayout.NORTH);
 
-        resultArea = new JTextArea();
-        resultArea.setEditable(false);
-        resultArea.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        JScrollPane scrollPane = new JScrollPane(resultArea);
+        resultTable = new JTable();
+        resultTable.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        JScrollPane scrollPane = new JScrollPane(resultTable);
         add(scrollPane, BorderLayout.CENTER);
 
         searchButton.addActionListener(new ActionListener() {
@@ -53,10 +54,10 @@ public class OferteVanzare extends JFrame {
                     if (minPrice <= maxPrice) {
                         searchOffersByPrice(minPrice, maxPrice);
                     } else {
-                        resultArea.setText("The minimum price must be less than or equal to the maximum price.");
+                        JOptionPane.showMessageDialog(OferteVanzare.this, "The minimum price must be less than or equal to the maximum price.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } catch (NumberFormatException ex) {
-                    resultArea.setText("Please enter valid numbers for prices.");
+                    JOptionPane.showMessageDialog(OferteVanzare.this, "Please enter valid numbers for prices.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -72,23 +73,27 @@ public class OferteVanzare extends JFrame {
             stmt.setDouble(2, maxPrice);
 
             ResultSet rs = stmt.executeQuery();
+            DefaultTableModel model = new DefaultTableModel(new String[]{"ID Spatiu", "Pret", "Moneda"}, 0);
 
-            StringBuilder result = new StringBuilder();
             while (rs.next()) {
-                result.append("ID Spatiu: ").append(rs.getInt("id_spatiu"))
-                        .append(", Pret: ").append(rs.getDouble("pret"))
-                        .append(", Moneda: ").append(rs.getString("moneda"))
-                        .append("\n");
+                int idSpatiu = rs.getInt("id_spatiu");
+                double pret = rs.getDouble("pret");
+                String moneda = rs.getString("moneda");
+
+                model.addRow(new Object[]{idSpatiu, pret, moneda});
             }
 
-            if (result.length() == 0) {
-                result.append("No offers found in this price range.");
-            }
+            resultTable.setModel(model);
 
-            resultArea.setText(result.toString());
+            // Set preferred widths for each column
+            TableColumnModel columnModel = resultTable.getColumnModel();
+            columnModel.getColumn(0).setPreferredWidth(100); // ID Spatiu
+            columnModel.getColumn(1).setPreferredWidth(100); // Pret
+            columnModel.getColumn(2).setPreferredWidth(50);  // Moneda
+
         } catch (SQLException e) {
             e.printStackTrace();
-            resultArea.setText("Error querying the database.");
+            JOptionPane.showMessageDialog(this, "Error querying the database.", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

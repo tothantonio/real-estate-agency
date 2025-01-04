@@ -3,12 +3,14 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class SpatiiByAdresa extends JFrame {
 
     private JTextField adresaField;
     private JButton searchButton;
-    private JTextArea resultArea;
+    private JTable resultTable;
 
     public SpatiiByAdresa() {
         setTitle("Searching spaces");
@@ -26,10 +28,9 @@ public class SpatiiByAdresa extends JFrame {
         topPanel.add(searchButton);
         add(topPanel, BorderLayout.NORTH);
 
-        resultArea = new JTextArea();
-        resultArea.setEditable(false);
-        resultArea.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        JScrollPane scrollPane = new JScrollPane(resultArea);
+        resultTable = new JTable();
+        resultTable.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        JScrollPane scrollPane = new JScrollPane(resultTable);
         add(scrollPane, BorderLayout.CENTER);
 
         searchButton.addActionListener(new ActionListener() {
@@ -39,7 +40,7 @@ public class SpatiiByAdresa extends JFrame {
                 if (!prefixAdresa.isEmpty()) {
                     searchSpatiiByAdresa(prefixAdresa);
                 } else {
-                    resultArea.setText("Please enter the address.");
+                    JOptionPane.showMessageDialog(SpatiiByAdresa.this, "Please enter the address.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -51,7 +52,7 @@ public class SpatiiByAdresa extends JFrame {
                 if (!prefixAdresa.isEmpty()) {
                     searchSpatiiByAdresa(prefixAdresa);
                 } else {
-                    resultArea.setText("Please enter the address.");
+                    JOptionPane.showMessageDialog(SpatiiByAdresa.this, "Please enter the address.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -67,23 +68,27 @@ public class SpatiiByAdresa extends JFrame {
 
             ResultSet rs = stmt.executeQuery();
 
-            StringBuilder result = new StringBuilder();
+            DefaultTableModel model = new DefaultTableModel(new String[]{"ID", "Adresa", "Zona", "Suprafata"}, 0);
             while (rs.next()) {
-                result.append("ID: ").append(rs.getInt("id_spatiu"))
-                        .append(", Adresa: ").append(rs.getString("adresa"))
-                        .append(", Zona: ").append(rs.getString("zona"))
-                        .append(", Suprafata: ").append(rs.getDouble("suprafata"))
-                        .append("\n");
+                int idSpatiu = rs.getInt("id_spatiu");
+                String adresa = rs.getString("adresa");
+                String zona = rs.getString("zona");
+                double suprafata = rs.getDouble("suprafata");
+                model.addRow(new Object[]{idSpatiu, adresa, zona, suprafata});
             }
 
-            if (result.length() == 0) {
-                result.append("No spaces found for address '" + prefixAdresa + "'.");
-            }
+            resultTable.setModel(model);
 
-            resultArea.setText(result.toString());
+            // Set preferred widths for each column
+            TableColumnModel columnModel = resultTable.getColumnModel();
+            columnModel.getColumn(0).setPreferredWidth(50);  // ID
+            columnModel.getColumn(1).setPreferredWidth(200); // Adresa
+            columnModel.getColumn(2).setPreferredWidth(100); // Zona
+            columnModel.getColumn(3).setPreferredWidth(100); // Suprafata
+
         } catch (SQLException e) {
             e.printStackTrace();
-            resultArea.setText("Error querying the database.");
+            JOptionPane.showMessageDialog(this, "Error querying the database: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 

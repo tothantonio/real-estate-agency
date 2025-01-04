@@ -3,11 +3,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class SpacePairsSearch extends JFrame {
 
     private JTextField priceDifferenceField; // Input pentru diferența de preț
-    private JTextArea resultArea; // Zonă pentru afișarea rezultatelor
+    private JTable resultTable; // Zonă pentru afișarea rezultatelor
     private JButton searchButton; // Butonul pentru căutare
 
     public SpacePairsSearch() {
@@ -34,10 +36,9 @@ public class SpacePairsSearch extends JFrame {
         add(inputPanel, BorderLayout.NORTH);
 
         // Zonă pentru afișarea rezultatelor
-        resultArea = new JTextArea();
-        resultArea.setEditable(false);
-        resultArea.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        JScrollPane scrollPane = new JScrollPane(resultArea);
+        resultTable = new JTable();
+        resultTable.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        JScrollPane scrollPane = new JScrollPane(resultTable);
         add(scrollPane, BorderLayout.CENTER);
 
         // Acțiune la apăsarea butonului
@@ -47,12 +48,12 @@ public class SpacePairsSearch extends JFrame {
                 try {
                     double priceDifference = Double.parseDouble(priceDifferenceField.getText());
                     if (priceDifference < 0) {
-                        resultArea.setText("Please enter a valid positive number for price difference.");
+                        JOptionPane.showMessageDialog(SpacePairsSearch.this, "Please enter a valid positive number for price difference.", "Error", JOptionPane.ERROR_MESSAGE);
                     } else {
                         searchSpacePairs(priceDifference);
                     }
                 } catch (NumberFormatException ex) {
-                    resultArea.setText("Please enter a valid number for price difference.");
+                    JOptionPane.showMessageDialog(SpacePairsSearch.this, "Please enter a valid number for price difference.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -60,7 +61,7 @@ public class SpacePairsSearch extends JFrame {
 
     private void searchSpacePairs(double maxPriceDifference) {
         String query = """
-    SELECT O1.id_spatiu AS id_spatiu1, O2.id_spatiu AS id_spatiu2, A.nume AS nume, 
+    SELECT O1.id_spatiu AS id_spatiu1, O2.id_spatiu AS id_spatiu2, A.nume AS nume,
            ABS(O1.pret - O2.pret) AS price_difference
     FROM oferta O1
     JOIN oferta O2
@@ -77,7 +78,7 @@ public class SpacePairsSearch extends JFrame {
             stmt.setDouble(1, maxPriceDifference); // Set the user input dynamically
 
             ResultSet rs = stmt.executeQuery();
-            StringBuilder result = new StringBuilder();
+            DefaultTableModel model = new DefaultTableModel(new String[]{"ID Spatiu 1", "ID Spatiu 2", "Agency Name", "Price Difference"}, 0);
 
             while (rs.next()) {
                 int idSpatiu1 = rs.getInt("id_spatiu1");
@@ -85,22 +86,28 @@ public class SpacePairsSearch extends JFrame {
                 String denumireAgentie = rs.getString("nume");
                 double priceDifference = rs.getDouble("price_difference");
 
-                result.append("Agency: ").append(denumireAgentie)
-                        .append(", ID Spatiu 1: ").append(idSpatiu1)
-                        .append(", ID Spatiu 2: ").append(idSpatiu2)
-                        .append(", Price Difference: ").append(priceDifference)
-                        .append("\n");
+                model.addRow(new Object[]{idSpatiu1, idSpatiu2, denumireAgentie, priceDifference});
             }
 
-            if (result.length() == 0) {
-                result.append("No space pairs found with the specified price difference.");
-            }
+            resultTable.setModel(model);
 
-            resultArea.setText(result.toString()); // Display results to the user
+            // Set preferred widths for each column
+            TableColumnModel columnModel = resultTable.getColumnModel();
+            columnModel.getColumn(0).setPreferredWidth(100); // ID Spatiu 1
+            columnModel.getColumn(1).setPreferredWidth(100); // ID Spatiu 2
+            columnModel.getColumn(2).setPreferredWidth(200); // Agency Name
+            columnModel.getColumn(3).setPreferredWidth(100); // Price Difference
 
         } catch (SQLException e) {
             e.printStackTrace();
-            resultArea.setText("Error querying the database: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Error querying the database: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            SpacePairsSearch frame = new SpacePairsSearch();
+            frame.setVisible(true);
+        });
     }
 }

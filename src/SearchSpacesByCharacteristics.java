@@ -3,11 +3,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 public class SearchSpacesByCharacteristics extends JFrame {
 
     private JTextField txtCaracteristici;
-    private JTextArea resultArea;
+    private JTable resultTable;
 
     public SearchSpacesByCharacteristics() {
         setTitle("Search Spaces by Characteristics");
@@ -32,11 +34,10 @@ public class SearchSpacesByCharacteristics extends JFrame {
         // Add the panel to the main window
         add(panel, BorderLayout.NORTH);
 
-        // Add result area
-        resultArea = new JTextArea();
-        resultArea.setEditable(false);
-        resultArea.setFont(new Font("Times New Roman", Font.PLAIN, 14));
-        JScrollPane scrollPane = new JScrollPane(resultArea);
+        // Add result table
+        resultTable = new JTable();
+        resultTable.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        JScrollPane scrollPane = new JScrollPane(resultTable);
         add(scrollPane, BorderLayout.CENTER);
 
         // Action on search button click
@@ -45,7 +46,7 @@ public class SearchSpacesByCharacteristics extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String caracteristici = txtCaracteristici.getText();
                 if (caracteristici.isEmpty()) {
-                    resultArea.setText("Please enter some characteristics to search for.");
+                    JOptionPane.showMessageDialog(SearchSpacesByCharacteristics.this, "Please enter some characteristics to search for.", "Error", JOptionPane.ERROR_MESSAGE);
                 } else {
                     // Logic to search spaces based on characteristics
                     searchSpacesByCharacteristics(caracteristici);
@@ -87,23 +88,27 @@ public class SearchSpacesByCharacteristics extends JFrame {
             // Execute the query
             ResultSet rs = stmt.executeQuery();
 
-            // Display results in the text area
-            StringBuilder results = new StringBuilder();
+            // Display results in the table
+            DefaultTableModel model = new DefaultTableModel(new String[]{"ID", "Pret", "Moneda", "Descriere"}, 0);
             while (rs.next()) {
-                String ofertaDetails = "ID: " + rs.getInt("id_spatiu") +
-                        ", Pret: " + rs.getDouble("pret") + rs.getString("moneda") +
-                        ", Descriere: " + rs.getString("caracteristici");
-                results.append(ofertaDetails).append("\n");
+                int idSpatiu = rs.getInt("id_spatiu");
+                double pret = rs.getDouble("pret");
+                String moneda = rs.getString("moneda");
+                String descriere = rs.getString("caracteristici");
+                model.addRow(new Object[]{idSpatiu, pret, moneda, descriere});
             }
 
-            if (results.length() == 0) {
-                resultArea.setText("No spaces found with the given characteristics.");
-            } else {
-                resultArea.setText("Found the following spaces:\n" + results.toString());
-            }
+            resultTable.setModel(model);
+
+            // Set preferred widths for each column
+            TableColumnModel columnModel = resultTable.getColumnModel();
+            columnModel.getColumn(0).setPreferredWidth(50);  // ID
+            columnModel.getColumn(1).setPreferredWidth(100); // Pret
+            columnModel.getColumn(2).setPreferredWidth(50);  // Moneda
+            columnModel.getColumn(3).setPreferredWidth(300); // Descriere
 
         } catch (SQLException e) {
-            resultArea.setText("Database error: " + e.getMessage());
+            JOptionPane.showMessageDialog(this, "Database error: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
