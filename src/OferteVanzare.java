@@ -64,7 +64,13 @@ public class OferteVanzare extends JFrame {
     }
 
     private void searchOffersByPrice(double minPrice, double maxPrice) {
-        String query = "SELECT * FROM Oferta WHERE vanzare = 'D' AND moneda = 'EUR' AND pret BETWEEN ? AND ? ORDER BY pret ASC";
+        String query = """
+            SELECT O.id_spatiu, O.pret, O.moneda, A.nume
+            FROM Oferta O
+            JOIN Agentie A ON O.id_agentie = A.id_agentie
+            WHERE O.vanzare = 'D' AND O.moneda = 'EUR' AND O.pret BETWEEN ? AND ?
+            ORDER BY O.pret ASC
+        """;
 
         try (Connection conn = DataBaseConnection.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
@@ -73,14 +79,15 @@ public class OferteVanzare extends JFrame {
             stmt.setDouble(2, maxPrice);
 
             ResultSet rs = stmt.executeQuery();
-            DefaultTableModel model = new DefaultTableModel(new String[]{"ID Spatiu", "Pret", "Moneda"}, 0);
+            DefaultTableModel model = new DefaultTableModel(new String[]{"ID Spatiu", "Pret", "Moneda", "Agentie"}, 0);
 
             while (rs.next()) {
                 int idSpatiu = rs.getInt("id_spatiu");
                 double pret = rs.getDouble("pret");
                 String moneda = rs.getString("moneda");
+                String agentie = rs.getString("nume");
 
-                model.addRow(new Object[]{idSpatiu, pret, moneda});
+                model.addRow(new Object[]{idSpatiu, pret, moneda, agentie});
             }
 
             resultTable.setModel(model);
@@ -90,6 +97,7 @@ public class OferteVanzare extends JFrame {
             columnModel.getColumn(0).setPreferredWidth(100); // ID Spatiu
             columnModel.getColumn(1).setPreferredWidth(100); // Pret
             columnModel.getColumn(2).setPreferredWidth(50);  // Moneda
+            columnModel.getColumn(3).setPreferredWidth(200); // Agentie
 
         } catch (SQLException e) {
             e.printStackTrace();
